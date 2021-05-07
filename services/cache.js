@@ -11,8 +11,13 @@ async function retrieveLines(filepath, nlines = 5) {
     });
   
     let result = [];
+    let counter = 0;
     for await (const line of rl) {
+      counter++;
       result.unshift(line);
+      if(counter == nlines) {
+        break;
+      }
     }
   
     return result;
