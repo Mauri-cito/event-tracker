@@ -20,7 +20,10 @@ app.post('/file/:filename', async (req, res) => {
       data: result
     });
   } catch(err) {
-    res.status(400);
+    res.status(400).json({
+      status: 'failed',
+      err
+    });
   }
 })
 
@@ -38,7 +41,10 @@ app.post('/file/:filename/events/:n', async (req, res) => {
         data: result
     });
   } catch(err) {
-    res.status(400).json(err);
+    res.status(400).json({
+      status: 'failed',
+      err
+    });
   }
 })
 
@@ -57,7 +63,10 @@ app.post('/file/:filename/events/:n/keyword/:key', async (req, res) => {
       data: result
     });
   } catch(err) {
-    res.status(400).json(err);
+    res.status(400).json({
+      status: 'failed',
+      err
+    });
   }
 })
 

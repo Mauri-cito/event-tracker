@@ -7,11 +7,14 @@ module.exports = class FileService {
   }
 
   async getContent(filename, nEvents, keyword) {
-    console.log(`calling fileService::getContent(${filename}, ${nEvents}, ${keyword})`);
-    return await this.cacheHandler.getData(
-      filename,
-      nEvents,
-      keyword
-    );
+    try {
+      return await this.cacheHandler.getData( 
+        filename,
+        nEvents,
+        keyword
+      );
+    } catch(err) {
+      throw err;
+    }
   }
 }
