@@ -1,8 +1,9 @@
 const fs = require('fs');
 const { stat } = require('fs').promises;
 const readline = require('readline');
+const readLastLines = require('read-last-lines');
 
-async function retrieveLines(filepath, nlines = 5) {
+async function retrieveFileContent(filepath) {
   try {
     const readable = fs.createReadStream(filepath);
   
@@ -11,16 +12,24 @@ async function retrieveLines(filepath, nlines = 5) {
     });
   
     let result = [];
-    let counter = 0;
     for await (const line of rl) {
-      counter++;
       result.unshift(line);
-      if(counter == nlines) {
-        break;
-      }
     }
   
     return result;
+  } catch(err) {
+    throw err;
+  }
+}
+
+async function retrieveLastEvents(filepath, n = 10, keyword = '') {
+  try {
+    const lines = await readLastLines.read(filepath, n);
+
+    return lines.split("\n").filter(line => {
+      return line !== '' &&
+        line.indexOf(keyword) !== -1;
+    });
   } catch(err) {
     throw err;
   }
@@ -40,8 +49,11 @@ module.exports = function (watchFolder = '/var/log') {
             ctime > ctimeByFile[filename].ctime // <- last modified date outdated
           ) {
   
-            // bring new data matching n and keyword
-            const data = await retrieveLines(filepath);
+            // bring new data matching n and keyword or full content
+            const data = (n && keyword) ? 
+              await retrieveLastEvents(filepath, n, keyword) :
+              await retrieveFileContent(filepath);
+
   
             // update in memory cache
             ctimeByFile[filename] = {
