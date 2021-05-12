@@ -18,7 +18,7 @@ module.exports = class BackwardLineReader extends stream.Readable {
         this.pos = size;
         this.fd = await fs.open(this.filename);
       } catch (err) {
-        console.log(err);
+        this.destroy(err);
       }
     }
     try {
@@ -59,8 +59,20 @@ module.exports = class BackwardLineReader extends stream.Readable {
         this.push(null);
       }
     } catch (err) {
-      console.log(err);
+      this.destroy(err);
     }
   }
 
+  async _destroy(err, callback) {
+    if (this.fd) {
+      try {
+        await this.fd.close();
+        callback(err);
+      } catch (er) {
+        callback(er);
+      }
+    } else {
+      callback(err);
+    }
+  }
 };
