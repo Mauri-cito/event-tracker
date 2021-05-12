@@ -1,0 +1,3 @@
+May 11 15:17:01 laptop CRON[27228]: pam_unix(cron:session): session closed for user root
+May 11 15:30:01 laptop CRON[28672]: pam_unix(cron:session): session opened for user root by (uid=0)
+May 11 15:30:01 laptop CRON[28672]: pam_unix(cron:session): session closed for user root
