@@ -7,6 +7,9 @@
 ## Running 
 ```npm start```
 
+## Running Tests
+```npm run test```
+
 ## Consuming 
 
 ### Entire File
