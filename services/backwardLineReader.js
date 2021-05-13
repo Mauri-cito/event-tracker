@@ -1,5 +1,10 @@
 const fs = require("fs").promises;
 const stream = require("stream");
+const path = require("path");
+
+const invalidFileType = (filename) => {
+  return ['.tar', '.gz', '.zip', '.7z'].includes(path.extname(filename));
+}
 
 module.exports = class BackwardLineReader extends stream.Readable {
   constructor(filename, initialPos) {
@@ -14,7 +19,19 @@ module.exports = class BackwardLineReader extends stream.Readable {
     n = 100;
     if (this.fd == null) {
       try {
-        const { size } = await fs.stat(this.filename);
+        const stats = await fs.stat(this.filename);
+        const { size, mode } = await fs.stat(this.filename);
+
+        if (invalidFileType(this.filename)) {
+          this.destroy('only ASCII files supported');
+          return;
+        }
+
+        if (mode != 33188) {
+          this.destroy('not allowed file');
+          return;
+        }
+
         this.pos = size;
         this.fd = await fs.open(this.filename);
       } catch (err) {
